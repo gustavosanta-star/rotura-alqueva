@@ -1,0 +1,203 @@
+{
+  "video": {
+    "largura": 1920,
+    "altura": 1080,
+    "fps": 30,
+    "intro_s": 3.0,
+    "segue_s": 44.0,
+    "fim_s": 7.0,
+    "hold_s": 5.0,
+    "fade_s": 0.8,
+    "horas_segue": 12.0,
+    "largura_vista_km": 30.0,
+    "km_a_frente": 2.0
+  },
+  "cores": {
+    "fundo": "#E4E1DA",
+    "relevo_baixo": "#F1EEE6",
+    "relevo_alto": "#D6CAB0",
+    "limite_modelo": "#7A7A7A",
+    "profundidade": [
+      "#DEEBF7",
+      "#C6DBEF",
+      "#9ECAE1",
+      "#6BAED6",
+      "#4292C6",
+      "#2171B5",
+      "#084594"
+    ],
+    "agua_alpha": 235,
+    "painel": "#FFFFFF",
+    "painel_alpha": 220,
+    "texto": "#141414",
+    "texto_2": "#505050",
+    "destaque": "#D7301F"
+  },
+  "profundidade": {
+    "limites": [
+      0.05,
+      0.5,
+      1,
+      2,
+      5,
+      10,
+      20
+    ],
+    "rotulos": [
+      "< 0,5",
+      "0,5 – 1",
+      "1 – 2",
+      "2 – 5",
+      "5 – 10",
+      "10 – 20",
+      "> 20"
+    ]
+  },
+  "fonte": {
+    "normal": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "negrito": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+  },
+  "titulo": {
+    "mostrar": true,
+    "x": 30,
+    "y": 26,
+    "texto": "Rotura hipotética da barragem de Alqueva",
+    "subtitulo": "Cenário B1 · profundidade da água · modelo HEC-RAS 2D",
+    "tamanho": 40,
+    "tamanho_sub": 24
+  },
+  "relogio": {
+    "mostrar": true,
+    "x": 30,
+    "y": 146,
+    "rotulo": "tempo desde a rotura",
+    "tamanho": 64
+  },
+  "legenda": {
+    "mostrar": true,
+    "x": 30,
+    "y": -330,
+    "titulo": "Profundidade (m)",
+    "texto_limite": "limite do modelo"
+  },
+  "enquadramento": {
+    "mostrar": true,
+    "x": -40,
+    "y": 150,
+    "altura": 820,
+    "titulo": "Vale do Guadiana"
+  },
+  "barra_tempo": {
+    "mostrar": true,
+    "x": 310,
+    "y": -110,
+    "largura": 1000,
+    "titulo": "horas desde a rotura"
+  },
+  "escala": {
+    "mostrar": true,
+    "x": 310,
+    "y": -40
+  },
+  "rodape": {
+    "mostrar": true,
+    "x": -40,
+    "y": -14,
+    "texto": "Cenário hipotético para estudo · terreno: SRTM, MDT DGT/CNIG · ETRS89/UTM 29N",
+    "tamanho": 17
+  },
+  "localidades": {
+    "mostrar": true,
+    "tamanho": 24,
+    "lista": [
+      [
+        "Barragem de Alqueva",
+        38.1975,
+        -7.4964,
+        1
+      ],
+      [
+        "Pedrógão",
+        38.1185,
+        -7.6455,
+        1
+      ],
+      [
+        "Pulo do Lobo",
+        37.803,
+        -7.633,
+        2
+      ],
+      [
+        "Mértola",
+        37.639,
+        -7.661,
+        1
+      ],
+      [
+        "Pomarão",
+        37.556,
+        -7.525,
+        2
+      ],
+      [
+        "Alcoutim",
+        37.471,
+        -7.471,
+        1
+      ],
+      [
+        "Sanlúcar de Guadiana",
+        37.473,
+        -7.465,
+        2
+      ],
+      [
+        "Castro Marim",
+        37.218,
+        -7.443,
+        1
+      ],
+      [
+        "Ayamonte",
+        37.213,
+        -7.407,
+        1
+      ],
+      [
+        "Vila Real de Santo António",
+        37.194,
+        -7.416,
+        1
+      ],
+      [
+        "Monte Gordo",
+        37.18,
+        -7.45,
+        2
+      ]
+    ]
+  },
+  "chegadas": {
+    "Pedrógão": 0.7,
+    "Mértola": 4.3,
+    "Alcoutim": 7.2,
+    "Vila Real de Santo António": 11.5
+  },
+  "chegadas_curto": {
+    "Pedrógão": "Pedrógão",
+    "Mértola": "Mértola",
+    "Alcoutim": "Alcoutim",
+    "Vila Real de Santo António": "VRSA"
+  },
+  "balanco_final": {
+    "mostrar": true,
+    "x": 30,
+    "y": 280,
+    "titulo": "Profundidade máxima nas 24 h",
+    "linhas": [
+      "área inundada pela onda: 22 631 ha",
+      "residentes em zona inundada: ~28 800 (PT + ES)"
+    ]
+  }
+}

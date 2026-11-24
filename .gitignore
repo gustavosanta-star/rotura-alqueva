@@ -1,0 +1,17 @@
+# dados e modelo (pesados; obtêm-se das fontes indicadas no relatório)
+dados/
+data/
+hecras/
+resultados/
+*.aprx
+*.atbx
+*.gdb/
+*.hdf
+*.tif
+*.tif.*
+*.ovr
+*.avi
+.backups/
+.ipynb_checkpoints/
+__pycache__/
+*.pyc

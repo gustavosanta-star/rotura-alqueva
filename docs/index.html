@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E se a barragem de Alqueva rompesse? — simulação hidráulica 2D</title>
+<meta name="description" content="Cenário hipotético de rotura das barragens de Alqueva e Pedrógão: simulação HEC-RAS 2D, mapas, vídeo e animação 3D em ArcGIS Pro, só com dados abertos.">
+<meta property="og:title" content="E se a barragem de Alqueva rompesse?">
+<meta property="og:description" content="Simulação hidráulica 2D de um cenário hipotético, do Alqueva ao mar em 24 horas. HEC-RAS · ArcGIS Pro · Python · dados abertos.">
+<meta property="og:image" content="media/flyer_b1.jpg">
+<style>
+  :root{
+    --azul:#0b2545; --azul2:#13315c; --magenta:#50127b; --rosa:#b5367a; --laranja:#fb8761;
+    --texto:#1d2330; --cinza:#5b6475; --linha:#e3e6ec; --fundo:#f6f7f9; --max:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--texto);background:#fff;line-height:1.6}
+  a{color:var(--magenta)}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
+  header{background:var(--azul);color:#fff;padding:56px 0 40px}
+  header .tag{display:inline-block;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#9ec2e6;font-weight:600}
+  h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;margin:.3em 0 .35em;font-weight:800}
+  header p.lead{font-size:1.15rem;color:#dbe6f3;max-width:760px;margin:0 0 18px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+  .chips li{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 12px;font-size:.85rem;color:#e8eef6}
+  .aviso{background:#fff7e6;border-left:4px solid #e0a100;padding:12px 16px;margin:28px 0 0;border-radius:4px;font-size:.95rem;color:#5a4300}
+  .video{margin:-10px 0 0;background:var(--azul2);padding:0 0 34px}
+  .video video{width:100%;display:block;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.35);background:#000}
+  .video .leg{color:#bcd0e6;font-size:.85rem;margin-top:8px}
+  section{padding:54px 0;border-bottom:1px solid var(--linha)}
+  section.alt{background:var(--fundo)}
+  h2{font-size:1.65rem;margin:0 0 6px;color:var(--azul)}
+  .sub{color:var(--cinza);margin:0 0 26px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .kpi{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:18px 20px}
+  .kpi b{display:block;font-size:2rem;line-height:1.15;color:var(--magenta);font-weight:800}
+  .kpi span{color:var(--cinza);font-size:.95rem}
+  .linha-tempo{position:relative;margin:34px 6px 6px;height:110px}
+  .linha-tempo .eixo{position:absolute;left:0;right:0;top:54px;height:8px;border-radius:4px;background:linear-gradient(90deg,#50127b,#b5367a 25%,#fb8761 55%,#fec287 80%,#fcfdbf)}
+  .marco{position:absolute;top:0;transform:translateX(-50%);text-align:center;font-size:.85rem;white-space:nowrap}
+  .marco .h{font-weight:800;color:var(--magenta);font-size:1rem}
+  .marco:after{content:"";display:block;width:2px;height:18px;background:var(--azul);margin:4px auto 0}
+  .escala{position:absolute;top:70px;transform:translateX(-50%);font-size:.75rem;color:var(--cinza);white-space:nowrap}
+  .galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+  .galeria figure{margin:0;background:#fff;border:1px solid var(--linha);border-radius:10px;overflow:hidden}
+  .galeria img{width:100%;display:block;aspect-ratio:297/420;object-fit:cover;cursor:zoom-in}
+  .galeria figcaption{padding:10px 12px;font-size:.9rem;color:var(--cinza)}
+  .galeria figcaption b{color:var(--texto)}
+  .passos{counter-reset:p;display:grid;gap:14px;padding:0;list-style:none}
+  .passos li{counter-increment:p;position:relative;padding:14px 16px 14px 62px;background:#fff;border:1px solid var(--linha);border-radius:10px}
+  .passos li:before{content:counter(p);position:absolute;left:16px;top:14px;width:32px;height:32px;border-radius:50%;background:var(--azul);color:#fff;font-weight:700;display:grid;place-items:center}
+  table{border-collapse:collapse;width:100%;font-size:.92rem;background:#fff}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--linha);text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  th{background:var(--azul);color:#fff;font-weight:600}
+  .tabela{overflow-x:auto;border:1px solid var(--linha);border-radius:10px}
+  .duas{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+  @media (max-width:760px){.duas{grid-template-columns:1fr}.marco{font-size:.72rem}}
+  .lim li{margin-bottom:8px}
+  .cena3d img{width:100%;border-radius:10px;border:1px solid var(--linha)}
+  .botoes{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .btn{display:inline-block;padding:10px 16px;border-radius:8px;background:var(--azul);color:#fff;text-decoration:none;font-weight:600;font-size:.95rem}
+  .btn.sec{background:#fff;color:var(--azul);border:1px solid var(--azul)}
+  footer{background:var(--azul);color:#c8d6e8;padding:30px 0;font-size:.9rem}
+  footer a{color:#fff}
+  .zoom{position:fixed;inset:0;background:rgba(5,12,25,.92);display:none;align-items:center;justify-content:center;z-index:9;cursor:zoom-out;padding:20px}
+  .zoom img{max-width:100%;max-height:100%;border-radius:6px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="tag">Projeto pessoal · simulação hidráulica · 2026</span>
+    <h1>E se a barragem de Alqueva rompesse?</h1>
+    <p class="lead">Um cenário hipotético de rotura das barragens de Alqueva e Pedrógão, modelado em 2D, mostra como a onda de cheia desceria o Guadiana até ao mar em 24 horas, e quem ficaria no seu caminho.</p>
+    <ul class="chips"><li>HEC-RAS 7.0.2 (2D)</li><li>ArcGIS Pro 3.6</li><li>Python</li><li>Só dados abertos</li><li>Portugal + Espanha</li></ul>
+    <div class="aviso"><b>Cenário hipotético, para estudo.</b> Não é um plano de emergência e não substitui o Plano de Emergência Externo (PEExt) da barragem de Alqueva, que é o documento oficial. O PEExt foi usado só como referência para validar o modelo.</div>
+  </div>
+</header>
+
+<div class="video">
+  <div class="wrap">
+    <video controls preload="metadata" poster="media/video_capa.jpg">
+      <source src="media/b1_rotura_alqueva_2d.mp4" type="video/mp4">
+    </video>
+    <div class="leg">Profundidade da água de 2 em 2 minutos, com a câmara a seguir a frente da onda. Vídeo gerado por código a partir dos resultados do modelo (59 s).</div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>Em números</h2>
+    <p class="sub">Cenário B1: Alqueva rompe com a albufeira a 154 m; Pedrógão rompe em cascata 29 minutos depois.</p>
+    <div class="kpis">
+      <div class="kpi"><b>~210 000 m³/s</b><span>caudal máximo logo a jusante de Alqueva</span></div>
+      <div class="kpi"><b>22 631 ha</b><span>inundados pela onda, além da água que já existia</span></div>
+      <div class="kpi"><b>10 351 ha</b><span>com perigosidade extrema (profundidade × velocidade &gt; 4 m²/s)</span></div>
+      <div class="kpi"><b>~28 800</b><span>residentes em zona inundada, em Portugal e em Espanha</span></div>
+    </div>
+
+    <h2 style="margin-top:46px">Quando chega a onda</h2>
+    <p class="sub">Horas depois da rotura de Alqueva até a água subir 0,3 m.</p>
+    <div class="linha-tempo" aria-label="Linha do tempo das chegadas">
+      <div class="eixo"></div>
+      <div class="marco" style="left:5.8%"><div class="h">0 h 42</div>Pedrógão</div>
+      <div class="marco" style="left:35.8%"><div class="h">4 h 18</div>Mértola</div>
+      <div class="marco" style="left:60%"><div class="h">7 h 12</div>Alcoutim</div>
+      <div class="marco" style="left:95.8%;transform:translateX(-90%)"><div class="h">11 h 30</div>V. R. Santo António</div>
+      <div class="escala" style="left:0;transform:none">0 h</div>
+      <div class="escala" style="left:50%">6 h</div>
+      <div class="escala" style="left:100%;transform:translateX(-100%)">12 h</div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Mapas</h2>
+    <p class="sub">Quatro mapas A3 feitos em ArcGIS Pro (clica para ampliar).</p>
+    <div class="galeria">
+      <figure><img src="media/B1_1_profundidade.jpg" alt="Mapa da profundidade máxima"><figcaption><b>Profundidade máxima</b> — até mais de 20 m no canhão do Guadiana.</figcaption></figure>
+      <figure><img src="media/B1_2_perigosidade.jpg" alt="Mapa de perigosidade"><figcaption><b>Perigosidade (h·v)</b> — classes de estabilidade de pessoas, veículos e edifícios.</figcaption></figure>
+      <figure><img src="media/B1_3_chegada.jpg" alt="Mapa do tempo de chegada"><figcaption><b>Tempo de chegada</b> — 1 319 ha atingidos nos primeiros 30 min.</figcaption></figure>
+      <figure><img src="media/B1_4_exposicao.jpg" alt="Mapa de exposição"><figcaption><b>Exposição</b> — VRSA, Ayamonte, Castro Marim, Alcoutim e Sanlúcar.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap duas">
+    <div>
+      <h2>Como foi feito</h2>
+      <p class="sub">Do terreno aos produtos, tudo reprodutível com os scripts do repositório.</p>
+      <ol class="passos">
+        <li><b>Terreno.</b> LiDAR da DGT no vale, MDT do CNIG em Espanha, SRTM de 2000 para o fundo das albufeiras (anterior ao enchimento) e um canal esquemático no estuário.</li>
+        <li><b>Modelo 2D.</b> Albufeira e vale em HEC-RAS, com malha de 100 m refinada a 50 m no canhão e rugosidade de Manning a partir da COS 2025.</li>
+        <li><b>Validação.</b> Hidrograma do PEExt imposto 5 km a jusante: níveis dentro de ±3 m até ao km 55.</li>
+        <li><b>Cenário B1.</b> 56 h de simulação, com mapas de 10 em 10 minutos.</li>
+        <li><b>Exposição.</b> Censos 2021 (INE), grelha de população JRC 2021 e Catastro espanhol.</li>
+        <li><b>Comunicação.</b> Mapas A3, vídeo 2D por código, animação 3D em ArcGIS Pro e flyer.</li>
+      </ol>
+    </div>
+    <div class="cena3d">
+      <h2>Animação 3D</h2>
+      <p class="sub">Cena em ArcGIS Pro com relevo exagerado 3× e câmara oblíqua a seguir a frente da onda.</p>
+      <img src="media/cena3d_provisoria.jpg" alt="Fotograma da animação 3D em ArcGIS Pro">
+      <h2 style="margin-top:30px">Flyer</h2>
+      <p class="sub">Resumo numa página A4.</p>
+      <div class="botoes"><a class="btn" href="media/flyer_b1.pdf">Flyer (PDF)</a><a class="btn sec" href="media/flyer_b1.jpg">Imagem</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Validação com o PEExt</h2>
+    <p class="sub">Teste de propagação com o hidrograma do PEExt (modelo congelado no plano P12).</p>
+    <div class="tabela"><table>
+      <tr><th>Perfil</th><th>Qmax modelo / PEExt (m³/s)</th><th>Nível máx. − PEExt</th><th>Chegada modelo / PEExt (h)</th></tr>
+      <tr><td>Pedrógão (+0,5 km)</td><td>37 148 / 56 471</td><td>+2,0 m</td><td>0,50 / 0,42</td></tr>
+      <tr><td>Enxoé</td><td>24 928 / 35 302</td><td>+0,5 m</td><td>1,08 / 0,79</td></tr>
+      <tr><td>km 55</td><td>22 611 / 30 498</td><td>+2,5 m</td><td>1,58 / 1,01</td></tr>
+      <tr><td>Pulo do Lobo</td><td>20 672 / 27 549</td><td>+19,2 m</td><td>2,33 / 1,69</td></tr>
+      <tr><td>Mértola</td><td>19 971 / 25 500</td><td>+10,1 m</td><td>3,58 / 1,82</td></tr>
+      <tr><td>Alcoutim</td><td>18 932 / 22 883</td><td>+8,5 m</td><td>5,17 / 2,64</td></tr>
+    </table></div>
+    <p class="sub" style="margin-top:14px">O cenário B1 esvazia quase toda a albufeira, por isso é mais gravoso do que a tabela do PEExt (caudais 2 a 2,5× maiores a jusante de Pedrógão). Os dois cenários não são diretamente comparáveis.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Limitações</h2>
+    <ul class="lim">
+      <li>A jusante do Pulo do Lobo, as chegadas são <b>1,4 a 2× mais lentas</b> do que no PEExt: não devem ser lidas como tempos de aviso.</li>
+      <li>Também a jusante do Pulo do Lobo, os níveis ficam 8 a 19 m acima do PEExt: a garganta é mais estreita do que a malha de 50 m.</li>
+      <li>A foz tem nível fixo (2 m), sem maré. Nos sapais da foz a cheia encosta ao limite do modelo, por isso a área inundada aí está subestimada.</li>
+      <li>Erro de volume de 8,8 % depois das 12 h, na contabilidade da brecha. Os máximos não são afetados.</li>
+      <li>A população é uniforme dentro de cada subsecção ou célula de 100 m, e conta residentes, não população presente.</li>
+    </ul>
+    <div class="botoes" style="margin-top:22px">
+      <a class="btn" href="https://github.com/gustavosanta-star/rotura-alqueva">Código no GitHub</a>
+      <a class="btn sec" href="https://github.com/gustavosanta-star/rotura-alqueva/blob/main/docs/relatorio_tecnico.md">Relatório técnico</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b>Gustavo Santa</b> · engenharia geoespacial · <a href="https://gustavosanta-star.github.io">gustavosanta-star.github.io</a> · ORCID <a href="https://orcid.org/0009-0008-4266-0732">0009-0008-4266-0732</a><br>
+    Projeto pessoal, feito só com dados abertos: DGT, CNIG, NASA/USGS (SRTM), INE, JRC/Eurostat, Dirección General del Catastro. Referência de validação: PEExt de Alqueva (ANEPC). ETRS89 / UTM 29N.
+  </div>
+</footer>
+
+<div class="zoom" id="zoom"><img alt=""></div>
+<script>
+  const z = document.getElementById('zoom'), zi = z.querySelector('img');
+  document.querySelectorAll('.galeria img').forEach(i => i.addEventListener('click', () => { zi.src = i.src; zi.alt = i.alt; z.style.display = 'flex'; }));
+  z.addEventListener('click', () => { z.style.display = 'none'; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') z.style.display = 'none'; });
+</script>
+</body>
+</html>
