@@ -6,6 +6,8 @@ Janela Python do ArcGIS Pro, com o projeto rotura-alqueva.aprx aberto (depois do
 
 Cria no projeto 4 mapas + 4 layouts (B1_1 … B1_4) e exporta PDF (300 dpi) e PNG (200 dpi) para resultados\\p13\\layouts\\.
 Decisões cartográficas (fixas e iguais nos quatro):
+  • sem mapa base (fundo = relevo); seta do norte no canto superior direito do mapa; escala em km;
+  • legenda só com as camadas temáticas (sem relevo, sem cabeçalhos repetidos), refeita depois de religar as molduras;
   • ETRS89 / UTM 29N (EPSG 25829); A3 vertical; escala 1:325 000; mesmo enquadramento;
   • relevo sombreado do terreno de 10 m como fundo; água que já existia às 09:00 a cinzento-azulado (não é inundação);
   • rasters recortados à área inundada pela rotura; classes definidas (não Jenks) com limiares com significado:
@@ -108,28 +110,25 @@ EXT = arcpy.Extent(598000, 4110000, 662000, 4236000)   # vale de Alqueva à foz
 ESCALA = 325000
 
 def legenda(lyt, mf, x, y, largura=85, altura=None):
-    """Legenda sem o relevo, sem cabeçalhos 'Value', letra ajustada a uma caixa fixa."""
+    """Legenda só com as camadas temáticas: sem relevo nem mapa base, sem cabeçalhos nem nomes de camada repetidos."""
     try:
         st = aprx.listStyleItems("ArcGIS 2D", "LEGEND", "Legend 1")[0]
         leg = lyt.createMapSurroundElement(arcpy.Point(x, y), "LEGEND", mf, st, "Legenda")
         leg.title = "Legenda"
         cim = leg.getDefinition("V3")
-        itens = [it for it in cim.items if not str(it.name).startswith("Relevo")]
-        for it in itens:
-            for att in ("showHeading", "showHeadings"):
+        fora = ("Relevo", "World", "Light Gray", "Topographic", "Imagery", "Hillshade")
+        cim.items = [it for it in cim.items if not str(it.name).startswith(fora)]
+        for it in cim.items:
+            for att in ("showHeading", "showLayerName", "showGroupLayerName"):
                 if hasattr(it, att):
                     setattr(it, att, False)
-            for att in ("layerNameSymbol", "labelSymbol", "headingSymbol"):
-                sym = getattr(it, att, None)
-                try:
-                    sym.symbol.height = 9 if att == "layerNameSymbol" else 8
-                except Exception:
-                    pass
-        cim.items = itens
-        try:
-            cim.titleSymbol.symbol.height = 12
-        except Exception:
-            pass
+            for att in ("labelSymbol", "layerNameSymbol", "headingSymbol"):
+                try: getattr(it, att).symbol.height = 8.5
+                except Exception: pass
+        try: cim.titleSymbol.symbol.height = 12
+        except Exception: pass
+        try: cim.autoAdd = False
+        except Exception: pass
         if altura:
             cim.fittingStrategy = "AdjustFontSize"
         leg.setDefinition(cim)
@@ -140,9 +139,39 @@ def legenda(lyt, mf, x, y, largura=85, altura=None):
     except Exception as e:
         print("   (legenda: afinar à mão)", e)
 
+
+def norte(lyt, mf, x, y):
+    """Seta do norte no canto superior direito da moldura."""
+    try:
+        na = aprx.listStyleItems("ArcGIS 2D", "NORTH_ARROW", "ArcGIS North 1")[0]
+        n_ = lyt.createMapSurroundElement(arcpy.Point(x, y), "NORTH_ARROW", mf, na, "Norte")
+        n_.elementHeight = 14
+        return n_
+    except Exception as e:
+        print("   (seta de norte à mão)", e)
+
+
+def escala(lyt, mf, x, y, nome="Escala", largura=None):
+    """Barra de escala em km."""
+    try:
+        sb = aprx.listStyleItems("ArcGIS 2D", "SCALE_BAR", "Scale Line 1 Metric")[0]
+        e_ = lyt.createMapSurroundElement(arcpy.Point(x, y), "SCALE_BAR", mf, sb, nome)
+        if largura:
+            e_.elementWidth = largura
+        try:
+            c_ = e_.getDefinition("V3"); c_.unitLabel = "km"; e_.setDefinition(c_)
+        except Exception:
+            pass
+        return e_
+    except Exception as e:
+        print("   (barra de escala à mão)", e)
+
 def novo_mapa(nome):
     m = aprx.createMap(nome, "MAP")
     m.spatialReference = sr
+    for l_ in m.listLayers():
+        if l_.isBasemapLayer:
+            m.removeLayer(l_)
     lr = m.addDataFromPath(relevo); lr.name = "Relevo sombreado (terreno 10 m)"
     try:
         sym = lr.symbology
@@ -185,16 +214,8 @@ def layout(nome, m, titulo, subtitulo, notas_extra=""):
     aprx.createTextElement(lyt, arcpy.Point(10, 412), "POINT", titulo, 20, name="Titulo")
     aprx.createTextElement(lyt, arcpy.Point(10, 405), "POINT", subtitulo, 10, name="Subtitulo")
     legenda(lyt, mf, 205, 398)
-    try:
-        sb = aprx.listStyleItems("ArcGIS 2D", "SCALE_BAR", "Scale Line 1 Metric")[0]
-        lyt.createMapSurroundElement(arcpy.Point(205, 40), "SCALE_BAR", mf, sb, "Escala")
-    except Exception as e:
-        print("   (barra de escala manual)", e)
-    try:
-        na = aprx.listStyleItems("ArcGIS 2D", "NORTH_ARROW", "ArcGIS North 1")[0]
-        lyt.createMapSurroundElement(arcpy.Point(275, 55), "NORTH_ARROW", mf, na, "Norte")
-    except Exception as e:
-        print("   (seta de norte manual)", e)
+    escala(lyt, mf, 205, 40)
+    norte(lyt, mf, 186, 382)
     nota = ("Cenário hipotético de rotura em série das barragens de Alqueva e Pedrógão (B1), para fins académicos.\n"
             "Não substitui o Plano de Emergência Externo (PEExt). Modelo HEC-RAS 7.0.2 2D; terreno LiDAR DGT + MDT CNIG + SRTM;\n"
             "rugosidade COS 2025 (DGT). Projeção: ETRS89 / UTM 29N (EPSG 25829). Escala 1:325 000." + notas_extra +
@@ -227,10 +248,12 @@ def exportar_tudo():
         for f in lyt.listElements("MAPFRAME_ELEMENT"):
             if f.name == "Mapa":
                 f.camera.setExtent(EXT); f.camera.scale = ESCALA
-        if nome != "B1_4_exposicao":                     # refazer a legenda já com o mapa ligado
-            for e in lyt.listElements("LEGEND_ELEMENT"):
-                lyt.deleteElement(e)
-            legenda(lyt, lyt.listElements("MAPFRAME_ELEMENT")[0], 205, 398)
+        # refazer a legenda já com o mapa ligado (senão o ArcGIS volta a pôr o relevo e os cabeçalhos)
+        for e in lyt.listElements("LEGEND_ELEMENT"):
+            lyt.deleteElement(e)
+        molduras = {f.name: f for f in lyt.listElements("MAPFRAME_ELEMENT")}
+        mf_leg = molduras.get("Mapa") or molduras.get("Estuario")
+        legenda(lyt, mf_leg, 205, 398)
         lyt.exportToPDF(os.path.join(saida, nome + ".pdf"), resolution=300)
         lyt.exportToPNG(os.path.join(saida, nome + ".png"), resolution=200)
         print("   exportado:", nome)
@@ -318,15 +341,10 @@ aprx.createTextElement(lyt4, arcpy.Point(10, 405), "POINT",
                        "Portugal e Espanha | ~28 800 residentes na área inundada pela rotura (até ~32 100)", 10, name="Subtitulo")
 aprx.createTextElement(lyt4, arcpy.Point(12, 396), "POINT", "Estuário — Vila Real de Santo António, Ayamonte e Castro Marim", 9, name="T_a")
 aprx.createTextElement(lyt4, arcpy.Point(12, 154), "POINT", "Alcoutim e Sanlúcar de Guadiana", 9, name="T_b")
-legenda(lyt4, fa, 205, 398, 85, 120)
-try:
-    sb = aprx.listStyleItems("ArcGIS 2D", "SCALE_BAR", "Scale Line 1 Metric")[0]
-    e1 = lyt4.createMapSurroundElement(arcpy.Point(140, 172), "SCALE_BAR", fa, sb, "Escala_a"); e1.elementWidth = 55
-    e2 = lyt4.createMapSurroundElement(arcpy.Point(140, 36), "SCALE_BAR", fb, sb, "Escala_b"); e2.elementWidth = 55
-    na = aprx.listStyleItems("ArcGIS 2D", "NORTH_ARROW", "ArcGIS North 1")[0]
-    lyt4.createMapSurroundElement(arcpy.Point(275, 40), "NORTH_ARROW", fa, na, "Norte")
-except Exception as e:
-    print("   (escala/norte à mão)", e)
+legenda(lyt4, fa, 205, 398, 85)
+escala(lyt4, fa, 14, 169, "Escala_a", 55)
+escala(lyt4, fb, 14, 34, "Escala_b", 55)
+norte(lyt4, fa, 186, 382)
 aprx.createTextElement(lyt4, arcpy.Point(205, 230), "POINT", tab, 8, name="Tabela")
 aprx.createTextElement(lyt4, arcpy.Point(10, 8), "POINT",
     "Cenário hipotético de rotura em série das barragens de Alqueva e Pedrógão (B1), para fins académicos. Não substitui o PEExt.\n"

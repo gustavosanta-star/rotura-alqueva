@@ -32,7 +32,7 @@
    - rugosidade de Manning a partir da COS 2025;
    - brechas em Alqueva e em Pedrógão (esta rompe em cascata, 29 min depois).
 3. **Validação:**
-   - hidrograma do PEExt imposto 5 km a jusante;
+   - hidrograma do PEExt (para o km 5) imposto logo a jusante da barragem, com a rotura desligada;
    - níveis dentro de ±3 m até ao km 55;
    - as limitações a jusante do Pulo do Lobo estão documentadas.
 4. **Cenário B1:** 56 h de simulação e mapas de 10 em 10 min.

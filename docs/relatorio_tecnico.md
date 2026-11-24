@@ -20,8 +20,10 @@ Simulou-se, com um modelo hidráulico bidimensional (HEC-RAS 7.0.2), a rotura em
 ## 2. Cenário
 
 - **Alqueva:** rotura com a albufeira a 154 m. Brecha de 148 m de base e 96 m de altura, taludes de 1:1,979 e tempo de formação de 8,7 min (Cd = 1,44). Os parâmetros foram testados num estudo de sensibilidade (planos P03–P06).
+- **Altura da brecha:** os 96 m são a altura da barragem acima da fundação: do coroamento (154 m) ao fundo final da brecha (58 m). Com os taludes indicados, a brecha tem ~528 m no topo, mais do que os 458 m do coroamento: é uma rotura total da abóbada, como no cenário oficial (PEI 2010/PEExt). No instante da rotura, o pé da barragem estava submerso pelo regolfo de Pedrógão (92,7 m), pelo que a queda inicial era de ~61 m.
+- **Caudal de saída:** não é imposto; o HEC-RAS calcula-o pela brecha a partir dos níveis a montante e a jusante.
 - **Pedrógão:** rotura desencadeada quando o nível chega a 94 m. No B1, isso acontece **29 min depois** da rotura de Alqueva.
-- **Condições iniciais:** um aquecimento de 6 h com 5 000 m³/s enche Pedrógão até ~93 m e põe o rio a correr até à foz antes da rotura (às 09:00 do dia simulado).
+- **Condições iniciais:** um aquecimento de 6 h com 5 000 m³/s (depois 0 m³/s: durante a rotura não entram afluências) enche Pedrógão até ~93 m e põe o rio a correr até à foz antes da rotura (às 09:00 do dia simulado).
 - **Foz:** nível fixo de 2,0 m (sem maré nem sobre-elevação).
 - **Duração:** 56 h de simulação; os produtos usam as 24 h seguintes à rotura (mapas de 10 em 10 min).
 
@@ -44,14 +46,16 @@ Sistema de referência: **ETRS89 / UTM 29N (EPSG 25829)**, comum aos dois lados 
 ## 4. Modelo hidráulico
 
 - **Domínio:** duas áreas 2D, a **albufeira de Alqueva** (contorno SRTM a 158 m) e o **vale** da barragem à foz (*Perimeter 1*). Estão ligadas pela estrutura `Barragem_Alqueva` (ligação SA/2D com brecha). Pedrógão é uma ligação 2D interna com brecha.
-- **Malha:** 100 m de base, refinada a **50 m** no canhão do Guadiana (de Pedrógão até 2 km a jusante de Mértola), com ~113 mil pontos no vale e ~12,5 mil na albufeira.
+- **Malha:** 100 m de base, refinada a **50 m** no canhão do Guadiana (de Pedrógão até 2 km a jusante de Mértola), com 112 881 células no vale e 12 499 na albufeira. O modelo é totalmente 2D: **não tem secções transversais (cross sections)**.
+- **Linhas de controlo:** 17 *reference lines* (11 nos perfis do PEExt — Alqueva, Ardila, Pedrógão, Enxoé, Pulo do Lobo, Mértola, Pomarão, Alcoutim, Odeleite, Castro Marim, VRSA — e 6 intermédias), traçadas perpendicularmente ao eixo do rio e estendidas até à cota máxima do PEExt + 10 m (`scripts/kit/r3_linhas.py`).
+- **Fronteiras:** linha `Entrada_PEExt` (caudal) logo a jusante de Alqueva; foz com nível imposto de 2,0 m.
 - **Terreno composto**, por ordem de prioridade: fundo de Pedrógão (SRTM) > canal do estuário > fundo de Alqueva (SRTM, correção vertical de −1 m) > LiDAR/MDT a 10 m. Verificação: volume de Alqueva a 152 m = 4 042 hm³ (oficial 4 150; −2,6 %); Pedrógão a 84,6 m = 91,6 hm³ (EDIA 99,1; −7,6 %).
 - **Rugosidade:** n da COS 2025, e n = 0,040 nas encostas do canhão abaixo de talvegue + 30 m. Na prática, leito ~0,035 e estuário ~0,025.
 - **Equações:** SWE completas, passo de tempo adaptativo.
 
 ## 5. Validação com o PEExt
 
-Antes do cenário completo, correu-se um **teste de propagação**: o hidrograma do PEExt foi imposto 5 km a jusante da barragem e os resultados foram comparados com a Tabela I.5. Depois de uma ronda de melhorias (batimetria de Pedrógão e do estuário, foz a 2 m, rugosidade da COS), o modelo foi **congelado** no plano P12, com estes resultados:
+Antes do cenário completo, correu-se um **teste de propagação**: o hidrograma do PEExt para o km 5 (pico de ~167 000 m³/s, ~81 hm³), precedido de 30 h a 15 000 m³/s, foi imposto numa linha de fronteira logo a jusante da barragem (rotura de Alqueva desligada) e os resultados foram comparados com a Tabela I.5. Depois de uma ronda de melhorias (batimetria de Pedrógão e do estuário, foz a 2 m, rugosidade da COS), o modelo foi **congelado** no plano P12, com estes resultados:
 
 | Perfil | Qmax P12 / PEExt (m³/s) | Nmax P12 − PEExt | Chegada P12 / PEExt (h) |
 |---|---|---|---|
