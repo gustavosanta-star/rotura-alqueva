@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>E se a barragem de Alqueva rompesse? — simulação hidráulica 2D</title>
+<title>E se a barragem de Alqueva rompesse? Simulação hidráulica 2D</title>
 <meta name="description" content="Cenário hipotético de rotura das barragens de Alqueva e Pedrógão: simulação HEC-RAS 2D, mapas, vídeo e animação 3D em ArcGIS Pro, só com dados abertos.">
 <meta property="og:title" content="E se a barragem de Alqueva rompesse?">
 <meta property="og:description" content="Simulação hidráulica 2D de um cenário hipotético, do Alqueva ao mar em 24 horas. HEC-RAS · ArcGIS Pro · Python · dados abertos.">
@@ -19,6 +19,9 @@
   a{color:var(--magenta)}
   .wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
   header{background:var(--azul);color:#fff;padding:56px 0 40px}
+  .lang-toggle{float:right;display:inline-flex;gap:4px}
+  .lang-toggle button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#dbe6f3;font:inherit;font-size:.75rem;font-weight:600;padding:3px 10px;border-radius:4px;cursor:pointer}
+  .lang-toggle button[aria-pressed="true"]{border-color:#fff;color:#fff}
   header .tag{display:inline-block;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#9ec2e6;font-weight:600}
   h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;margin:.3em 0 .35em;font-weight:800}
   header p.lead{font-size:1.15rem;color:#dbe6f3;max-width:760px;margin:0 0 18px}
@@ -72,11 +75,12 @@
 
 <header>
   <div class="wrap">
-    <span class="tag">Projeto pessoal · simulação hidráulica · 2026</span>
-    <h1>E se a barragem de Alqueva rompesse?</h1>
-    <p class="lead">Um cenário hipotético de rotura das barragens de Alqueva e Pedrógão, modelado em 2D, mostra como a onda de cheia desceria o Guadiana até ao mar em 24 horas, e quem ficaria no seu caminho.</p>
-    <ul class="chips"><li>HEC-RAS 7.0.2 (2D)</li><li>ArcGIS Pro 3.6</li><li>Python</li><li>Só dados abertos</li><li>Portugal + Espanha</li></ul>
-    <div class="aviso"><b>Cenário hipotético, para estudo.</b> Não é um plano de emergência e não substitui o Plano de Emergência Externo (PEExt) da barragem de Alqueva, que é o documento oficial. O PEExt foi usado só como referência para validar o modelo.</div>
+    <span class="lang-toggle" role="group" aria-label="Idioma / Language"><button type="button" data-lang="pt" aria-pressed="true">PT</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
+    <span class="tag" data-en="Personal project · hydraulic simulation · 2026">Projeto pessoal · simulação hidráulica · 2026</span>
+    <h1 data-en="What if the Alqueva dam failed?">E se a barragem de Alqueva rompesse?</h1>
+    <p class="lead" data-en="A hypothetical failure of the Alqueva and Pedrógão dams, modelled in 2D, shows how the flood wave would travel down the Guadiana to the sea in 24 hours, and who would be in its path.">Um cenário hipotético de rotura das barragens de Alqueva e Pedrógão, modelado em 2D, mostra como a onda de cheia desceria o Guadiana até ao mar em 24 horas, e quem ficaria no seu caminho.</p>
+    <ul class="chips"><li>HEC-RAS 7.0.2 (2D)</li><li>ArcGIS Pro 3.6</li><li>Python</li><li data-en="Open data only">Só dados abertos</li><li data-en="Portugal + Spain">Portugal + Espanha</li></ul>
+    <div class="aviso" data-en="&lt;b&gt;Hypothetical scenario, for study purposes.&lt;/b&gt; This is not an emergency plan and it does not replace the External Emergency Plan (PEExt) for the Alqueva dam, which is the official document. The PEExt was used only as a reference to validate the model."><b>Cenário hipotético, para estudo.</b> Não é um plano de emergência e não substitui o Plano de Emergência Externo (PEExt) da barragem de Alqueva, que é o documento oficial. O PEExt foi usado só como referência para validar o modelo.</div>
   </div>
 </header>
 
@@ -85,24 +89,24 @@
     <video controls preload="metadata" poster="media/video_capa.jpg">
       <source src="media/b1_rotura_alqueva_2d.mp4" type="video/mp4">
     </video>
-    <div class="leg">Profundidade da água ao longo de 24 h, com a câmara a seguir a frente da onda e a toponímia do vale. Vídeo gerado por código a partir dos registos do modelo de 10 em 10 min, interpolados no tempo (1 min 54 s).</div>
+    <div class="leg" data-en="Water depth over 24 h, with the camera following the wave front and the valley&#x27;s place names. The video was generated in code from the model&#x27;s 10-minute outputs, interpolated in time (1 min 54 s).">Profundidade da água ao longo de 24 h, com a câmara a seguir a frente da onda e a toponímia do vale. Vídeo gerado por código a partir dos registos do modelo de 10 em 10 min, interpolados no tempo (1 min 54 s).</div>
   </div>
 </div>
 
 <section>
   <div class="wrap">
-    <h2>Em números</h2>
-    <p class="sub">Cenário B1: Alqueva rompe com a albufeira a 154 m; Pedrógão rompe em cascata 29 minutos depois.</p>
+    <h2 data-en="In numbers">Em números</h2>
+    <p class="sub" data-en="Scenario B1: Alqueva fails with the reservoir at 154 m; Pedrógão fails in cascade 29 minutes later.">Cenário B1: Alqueva rompe com a albufeira a 154 m; Pedrógão rompe em cascata 29 minutos depois.</p>
     <div class="kpis">
-      <div class="kpi"><b>~210 000 m³/s</b><span>caudal máximo logo a jusante de Alqueva</span></div>
-      <div class="kpi"><b>22 631 ha</b><span>inundados pela onda, além da água que já existia</span></div>
-      <div class="kpi"><b>10 351 ha</b><span>com perigosidade extrema (profundidade × velocidade &gt; 4 m²/s)</span></div>
-      <div class="kpi"><b>~28 800</b><span>residentes em zona inundada, em Portugal e em Espanha</span></div>
+      <div class="kpi"><b>~210 000 m³/s</b><span data-en="peak discharge just downstream of Alqueva">caudal máximo logo a jusante de Alqueva</span></div>
+      <div class="kpi"><b>22 631 ha</b><span data-en="flooded by the wave, on top of the water already there">inundados pela onda, além da água que já existia</span></div>
+      <div class="kpi"><b>10 351 ha</b><span data-en="with extreme hazard (depth × velocity &amp;gt; 4 m²/s)">com perigosidade extrema (profundidade × velocidade &gt; 4 m²/s)</span></div>
+      <div class="kpi"><b>~28 800</b><span data-en="residents in the flooded area, in Portugal and Spain">residentes em zona inundada, em Portugal e em Espanha</span></div>
     </div>
 
-    <h2 style="margin-top:46px">Quando chega a onda</h2>
-    <p class="sub">Horas depois da rotura de Alqueva até a água subir 0,3 m.</p>
-    <div class="linha-tempo" aria-label="Linha do tempo das chegadas">
+    <h2 style="margin-top:46px" data-en="When the wave arrives">Quando chega a onda</h2>
+    <p class="sub" data-en="Hours after the Alqueva failure until the water rises 0.3 m.">Horas depois da rotura de Alqueva até a água subir 0,3 m.</p>
+    <div class="linha-tempo" aria-label="Linha do tempo das chegadas" data-en-aria="Arrival timeline">
       <div class="eixo"></div>
       <div class="marco" style="left:5.8%"><div class="h">0 h 42</div>Pedrógão</div>
       <div class="marco" style="left:35.8%"><div class="h">4 h 18</div>Mértola</div>
@@ -117,13 +121,13 @@
 
 <section class="alt">
   <div class="wrap">
-    <h2>Mapas</h2>
-    <p class="sub">Quatro mapas A3 feitos em ArcGIS Pro (clica para ampliar).</p>
+    <h2 data-en="Maps">Mapas</h2>
+    <p class="sub" data-en="Four A3 maps made in ArcGIS Pro (click to enlarge).">Quatro mapas A3 feitos em ArcGIS Pro (clica para ampliar).</p>
     <div class="galeria">
-      <figure><img src="media/B1_1_profundidade.jpg" alt="Mapa da profundidade máxima"><figcaption><b>Profundidade máxima</b> — até mais de 20 m no canhão do Guadiana.</figcaption></figure>
-      <figure><img src="media/B1_2_perigosidade.jpg" alt="Mapa de perigosidade"><figcaption><b>Perigosidade (h·v)</b> — classes de estabilidade de pessoas, veículos e edifícios.</figcaption></figure>
-      <figure><img src="media/B1_3_chegada.jpg" alt="Mapa do tempo de chegada"><figcaption><b>Tempo de chegada</b> — 1 319 ha atingidos nos primeiros 30 min.</figcaption></figure>
-      <figure><img src="media/B1_4_exposicao.jpg" alt="Mapa de exposição"><figcaption><b>Exposição</b> — VRSA, Ayamonte, Castro Marim, Alcoutim e Sanlúcar.</figcaption></figure>
+      <figure><img src="media/B1_1_profundidade.jpg" alt="Mapa da profundidade máxima" data-en-alt="Maximum depth map"><figcaption data-en="&lt;b&gt;Maximum depth.&lt;/b&gt; Over 20 m in the Guadiana canyon."><b>Profundidade máxima.</b> Passa dos 20 m no canhão do Guadiana.</figcaption></figure>
+      <figure><img src="media/B1_2_perigosidade.jpg" alt="Mapa de perigosidade" data-en-alt="Hazard map"><figcaption data-en="&lt;b&gt;Hazard (h·v).&lt;/b&gt; Stability classes for people, vehicles and buildings."><b>Perigosidade (h·v).</b> Classes de estabilidade para pessoas, veículos e edifícios.</figcaption></figure>
+      <figure><img src="media/B1_3_chegada.jpg" alt="Mapa do tempo de chegada" data-en-alt="Arrival time map"><figcaption data-en="&lt;b&gt;Arrival time.&lt;/b&gt; Within the first 30 min the water already covers 1 319 ha."><b>Tempo de chegada.</b> Nos primeiros 30 min a água já cobre 1 319 ha.</figcaption></figure>
+      <figure><img src="media/B1_4_exposicao.jpg" alt="Mapa de exposição" data-en-alt="Exposure map"><figcaption data-en="&lt;b&gt;Exposure.&lt;/b&gt; VRSA, Ayamonte, Castro Marim, Alcoutim and Sanlúcar."><b>Exposição.</b> VRSA, Ayamonte, Castro Marim, Alcoutim e Sanlúcar.</figcaption></figure>
     </div>
   </div>
 </section>
@@ -131,66 +135,66 @@
 <section>
   <div class="wrap duas">
     <div>
-      <h2>Como foi feito</h2>
-      <p class="sub">Do terreno aos produtos, tudo reprodutível com os scripts do repositório.</p>
+      <h2 data-en="How it was done">Como foi feito</h2>
+      <p class="sub" data-en="From terrain to final products, everything can be reproduced with the scripts in the repository.">Do terreno aos produtos, tudo reprodutível com os scripts do repositório.</p>
       <ol class="passos">
-        <li><b>Terreno.</b> LiDAR da DGT no vale, MDT do CNIG em Espanha, SRTM de 2000 para o fundo das albufeiras (anterior ao enchimento) e um canal esquemático no estuário.</li>
-        <li><b>Modelo 2D.</b> Albufeira e vale em HEC-RAS 2D (~125 mil células, sem secções transversais), com malha de 100 m refinada a 50 m no canhão e rugosidade de Manning a partir da COS 2025. Brecha de rotura total: 96 m de altura (coroamento 154 m → fundação 58 m).</li>
-        <li><b>Validação.</b> Hidrograma do PEExt (km 5) imposto logo a jusante da barragem: níveis dentro de ±3 m até ao km 55.</li>
-        <li><b>Cenário B1.</b> 56 h de simulação, com mapas de 10 em 10 minutos.</li>
-        <li><b>Exposição.</b> Censos 2021 (INE), grelha de população JRC 2021 e Catastro espanhol.</li>
-        <li><b>Comunicação.</b> Mapas A3, vídeo 2D por código, animação 3D em ArcGIS Pro e flyer.</li>
+        <li data-en="&lt;b&gt;Terrain.&lt;/b&gt; DGT LiDAR in the valley, CNIG DTM in Spain, SRTM from 2000 for the reservoir beds (before filling) and a schematic channel in the estuary."><b>Terreno.</b> LiDAR da DGT no vale, MDT do CNIG em Espanha, SRTM de 2000 para o fundo das albufeiras (anterior ao enchimento) e um canal esquemático no estuário.</li>
+        <li data-en="&lt;b&gt;2D model.&lt;/b&gt; Reservoir and valley in HEC-RAS 2D (~125 thousand cells, no cross sections), with a 100 m mesh refined to 50 m in the canyon and Manning roughness from COS 2025. Full-failure breach: 96 m high (crest 154 m → foundation 58 m)."><b>Modelo 2D.</b> Albufeira e vale em HEC-RAS 2D (~125 mil células, sem secções transversais), com malha de 100 m refinada a 50 m no canhão e rugosidade de Manning a partir da COS 2025. Brecha de rotura total: 96 m de altura (coroamento 154 m → fundação 58 m).</li>
+        <li data-en="&lt;b&gt;Validation.&lt;/b&gt; PEExt hydrograph (km 5) applied just downstream of the dam: water levels within ±3 m up to km 55."><b>Validação.</b> Hidrograma do PEExt (km 5) imposto logo a jusante da barragem: níveis dentro de ±3 m até ao km 55.</li>
+        <li data-en="&lt;b&gt;Scenario B1.&lt;/b&gt; 56 h of simulation, with maps every 10 minutes."><b>Cenário B1.</b> 56 h de simulação, com mapas de 10 em 10 minutos.</li>
+        <li data-en="&lt;b&gt;Exposure.&lt;/b&gt; 2021 Census (INE), JRC 2021 population grid and the Spanish Catastro."><b>Exposição.</b> Censos 2021 (INE), grelha de população JRC 2021 e Catastro espanhol.</li>
+        <li data-en="&lt;b&gt;Communication.&lt;/b&gt; A3 maps, a 2D video generated in code, a 3D animation in ArcGIS Pro and a flyer."><b>Comunicação.</b> Mapas A3, vídeo 2D por código, animação 3D em ArcGIS Pro e flyer.</li>
       </ol>
     </div>
     <div class="cena3d">
-      <h2>Animação 3D</h2>
-      <p class="sub">Cena em ArcGIS Pro com relevo exagerado 3× e câmara oblíqua a seguir a frente da onda.</p>
+      <h2 data-en="3D animation">Animação 3D</h2>
+      <p class="sub" data-en="ArcGIS Pro scene with 3× vertical exaggeration and an oblique camera following the wave front.">Cena em ArcGIS Pro com relevo exagerado 3× e câmara oblíqua a seguir a frente da onda.</p>
       <video controls preload="metadata" poster="media/cena3d.jpg" style="width:100%;border-radius:10px;border:1px solid var(--linha)"><source src="media/b1_rotura_alqueva_3d.mp4" type="video/mp4"></video>
       <h2 style="margin-top:30px">Flyer</h2>
-      <p class="sub">Resumo numa página A4.</p>
-      <div class="botoes"><a class="btn" href="media/flyer_b1.pdf">Flyer (PDF)</a><a class="btn sec" href="media/flyer_b1.jpg">Imagem</a></div>
+      <p class="sub" data-en="A one-page A4 summary.">Resumo numa página A4.</p>
+      <div class="botoes"><a class="btn" href="media/flyer_b1.pdf">Flyer (PDF)</a><a class="btn sec" href="media/flyer_b1.jpg" data-en="Image">Imagem</a></div>
     </div>
   </div>
 </section>
 
 <section class="alt">
   <div class="wrap">
-    <h2>Validação com o PEExt</h2>
-    <p class="sub">Teste de propagação com o hidrograma do PEExt (modelo congelado no plano P12).</p>
+    <h2 data-en="Validation against the PEExt">Validação com o PEExt</h2>
+    <p class="sub" data-en="Propagation test with the PEExt hydrograph (model frozen at plan P12).">Teste de propagação com o hidrograma do PEExt (modelo congelado no plano P12).</p>
     <div class="tabela"><table>
-      <tr><th>Perfil</th><th>Qmax modelo / PEExt (m³/s)</th><th>Nível máx. − PEExt</th><th>Chegada modelo / PEExt (h)</th></tr>
-      <tr><td>Pedrógão (+0,5 km)</td><td>37 148 / 56 471</td><td>+2,0 m</td><td>0,50 / 0,42</td></tr>
-      <tr><td>Enxoé</td><td>24 928 / 35 302</td><td>+0,5 m</td><td>1,08 / 0,79</td></tr>
-      <tr><td>km 55</td><td>22 611 / 30 498</td><td>+2,5 m</td><td>1,58 / 1,01</td></tr>
-      <tr><td>Pulo do Lobo</td><td>20 672 / 27 549</td><td>+19,2 m</td><td>2,33 / 1,69</td></tr>
-      <tr><td>Mértola</td><td>19 971 / 25 500</td><td>+10,1 m</td><td>3,58 / 1,82</td></tr>
-      <tr><td>Alcoutim</td><td>18 932 / 22 883</td><td>+8,5 m</td><td>5,17 / 2,64</td></tr>
+      <tr><th data-en="Profile">Perfil</th><th data-en="Qmax model / PEExt (m³/s)">Qmax modelo / PEExt (m³/s)</th><th data-en="Max. level − PEExt">Nível máx. − PEExt</th><th data-en="Arrival model / PEExt (h)">Chegada modelo / PEExt (h)</th></tr>
+      <tr><td data-en="Pedrógão (+0.5 km)">Pedrógão (+0,5 km)</td><td>37 148 / 56 471</td><td data-en="+2.0 m">+2,0 m</td><td data-en="0.50 / 0.42">0,50 / 0,42</td></tr>
+      <tr><td>Enxoé</td><td>24 928 / 35 302</td><td data-en="+0.5 m">+0,5 m</td><td data-en="1.08 / 0.79">1,08 / 0,79</td></tr>
+      <tr><td>km 55</td><td>22 611 / 30 498</td><td data-en="+2.5 m">+2,5 m</td><td data-en="1.58 / 1.01">1,58 / 1,01</td></tr>
+      <tr><td>Pulo do Lobo</td><td>20 672 / 27 549</td><td data-en="+19.2 m">+19,2 m</td><td data-en="2.33 / 1.69">2,33 / 1,69</td></tr>
+      <tr><td>Mértola</td><td>19 971 / 25 500</td><td data-en="+10.1 m">+10,1 m</td><td data-en="3.58 / 1.82">3,58 / 1,82</td></tr>
+      <tr><td>Alcoutim</td><td>18 932 / 22 883</td><td data-en="+8.5 m">+8,5 m</td><td data-en="5.17 / 2.64">5,17 / 2,64</td></tr>
     </table></div>
-    <p class="sub" style="margin-top:14px">Esta tabela é o teste de validação (hidrograma do PEExt imposto), não o cenário B1. No B1 a albufeira esvazia quase toda, por isso os caudais a jusante de Pedrógão são 2 a 2,5× os da tabela do PEExt. Os dois cenários não são diretamente comparáveis.</p>
+    <p class="sub" style="margin-top:14px" data-en="This table is the validation test (with the PEExt hydrograph applied), not scenario B1. In B1 the reservoir empties almost completely, so discharges downstream of Pedrógão are 2 to 2.5× those in the PEExt table. The two scenarios are not directly comparable.">Esta tabela é o teste de validação (hidrograma do PEExt imposto), não o cenário B1. No B1 a albufeira esvazia quase toda, por isso os caudais a jusante de Pedrógão são 2 a 2,5× os da tabela do PEExt. Os dois cenários não são diretamente comparáveis.</p>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <h2>Limitações</h2>
+    <h2 data-en="Limitations">Limitações</h2>
     <ul class="lim">
-      <li>A jusante do Pulo do Lobo, as chegadas são <b>1,4 a 2× mais lentas</b> do que no PEExt: não devem ser lidas como tempos de aviso.</li>
-      <li>Também a jusante do Pulo do Lobo, os níveis ficam 8 a 19 m acima do PEExt: a garganta é mais estreita do que a malha de 50 m.</li>
-      <li>A foz tem nível fixo (2 m), sem maré. Nos sapais da foz a cheia encosta ao limite do modelo, por isso a área inundada aí está subestimada.</li>
-      <li>Erro de volume de 8,8 % depois das 12 h, na contabilidade da brecha. Os máximos não são afetados.</li>
-      <li>A população é uniforme dentro de cada subsecção ou célula de 100 m, e conta residentes, não população presente.</li>
+      <li data-en="Downstream of Pulo do Lobo, arrivals are &lt;b&gt;1.4 to 2× slower&lt;/b&gt; than in the PEExt: they should not be read as warning times.">A jusante do Pulo do Lobo, as chegadas são <b>1,4 a 2× mais lentas</b> do que no PEExt: não devem ser lidas como tempos de aviso.</li>
+      <li data-en="Also downstream of Pulo do Lobo, water levels are 8 to 19 m above the PEExt: the gorge is narrower than the 50 m mesh.">Também a jusante do Pulo do Lobo, os níveis ficam 8 a 19 m acima do PEExt: a garganta é mais estreita do que a malha de 50 m.</li>
+      <li data-en="The river mouth has a fixed level (2 m), with no tide. In the marshes at the mouth the flood runs into the model boundary, so the flooded area there is underestimated.">A foz tem nível fixo (2 m), sem maré. Nos sapais da foz a cheia encosta ao limite do modelo, por isso a área inundada aí está subestimada.</li>
+      <li data-en="Volume error of 8.8 % after 12 h, in the breach accounting. Peak values are not affected.">Erro de volume de 8,8 % depois das 12 h, na contabilidade da brecha. Os máximos não são afetados.</li>
+      <li data-en="Population is spread evenly within each census subsection or 100 m cell, and counts residents, not the population actually present.">A população é uniforme dentro de cada subsecção ou célula de 100 m, e conta residentes, não população presente.</li>
     </ul>
     <div class="botoes" style="margin-top:22px">
-      <a class="btn" href="https://github.com/gustavosanta-star/rotura-alqueva">Código no GitHub</a>
-      <a class="btn sec" href="https://github.com/gustavosanta-star/rotura-alqueva/blob/main/docs/relatorio_tecnico.md">Relatório técnico</a>
+      <a class="btn" href="https://github.com/gustavosanta-star/rotura-alqueva" data-en="Code on GitHub">Código no GitHub</a>
+      <a class="btn sec" href="https://github.com/gustavosanta-star/rotura-alqueva/blob/main/docs/relatorio_tecnico.md" data-en="Technical report (in Portuguese)">Relatório técnico</a>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <b>Gustavo Santa</b> · engenharia geoespacial · <a href="https://gustavosanta-star.github.io">gustavosanta-star.github.io</a> · ORCID <a href="https://orcid.org/0009-0008-4266-0732">0009-0008-4266-0732</a><br>
-    Projeto pessoal, feito só com dados abertos: DGT, CNIG, NASA/USGS (SRTM), INE, JRC/Eurostat, Dirección General del Catastro. Referência de validação: PEExt de Alqueva (ANEPC). ETRS89 / UTM 29N.
+    <b>Gustavo Santa</b> · <span data-en="geospatial engineering">engenharia geoespacial</span> · <a href="https://gustavosanta-star.github.io">gustavosanta-star.github.io</a> · ORCID <a href="https://orcid.org/0009-0008-4266-0732">0009-0008-4266-0732</a><br>
+    <span data-en="Personal project, built with open data only: DGT, CNIG, NASA/USGS (SRTM), INE, JRC/Eurostat, Dirección General del Catastro. Validation reference: Alqueva PEExt (ANEPC). ETRS89 / UTM 29N.">Projeto pessoal, feito só com dados abertos: DGT, CNIG, NASA/USGS (SRTM), INE, JRC/Eurostat, Dirección General del Catastro. Referência de validação: PEExt de Alqueva (ANEPC). ETRS89 / UTM 29N.</span>
   </div>
 </footer>
 
@@ -200,6 +204,42 @@
   document.querySelectorAll('.galeria img').forEach(i => i.addEventListener('click', () => { zi.src = i.src; zi.alt = i.alt; z.style.display = 'flex'; }));
   z.addEventListener('click', () => { z.style.display = 'none'; });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') z.style.display = 'none'; });
+</script>
+<script>
+  // Idioma: ?lang=en no endereço ou a escolha guardada no browser (partilhada com o portfólio).
+  let LANG = (() => {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'en' || q === 'pt') return q;
+    try { const s = localStorage.getItem('lang'); if (s === 'en' || s === 'pt') return s; } catch (e) {}
+    return 'pt';
+  })();
+  const TITULO = {pt: document.title, en: 'What if the Alqueva dam failed? 2D hydraulic simulation'};
+  function aplicarIdioma() {
+    document.documentElement.lang = LANG === 'en' ? 'en' : 'pt-PT';
+    document.title = TITULO[LANG];
+    document.querySelectorAll('[data-en]').forEach(el => {
+      if (el.dataset.pt === undefined) el.dataset.pt = el.innerHTML;
+      el.innerHTML = LANG === 'en' ? el.dataset.en : el.dataset.pt;
+    });
+    document.querySelectorAll('[data-en-alt]').forEach(el => {
+      if (el.dataset.ptAlt === undefined) el.dataset.ptAlt = el.alt;
+      el.alt = LANG === 'en' ? el.dataset.enAlt : el.dataset.ptAlt;
+    });
+    document.querySelectorAll('[data-en-aria]').forEach(el => {
+      if (el.dataset.ptAria === undefined) el.dataset.ptAria = el.getAttribute('aria-label');
+      el.setAttribute('aria-label', LANG === 'en' ? el.dataset.enAria : el.dataset.ptAria);
+    });
+    document.querySelectorAll('.lang-toggle button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
+  }
+  document.querySelectorAll('.lang-toggle button').forEach(b => b.addEventListener('click', () => {
+    LANG = b.dataset.lang;
+    try { localStorage.setItem('lang', LANG); } catch (e) {}
+    const u = new URL(location.href);
+    if (LANG === 'en') u.searchParams.set('lang', 'en'); else u.searchParams.delete('lang');
+    history.replaceState(null, '', u);
+    aplicarIdioma();
+  }));
+  aplicarIdioma();
 </script>
 </body>
 </html>
