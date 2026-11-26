@@ -6,7 +6,7 @@
 
 ![Pré-visualização do vídeo](docs/media/previsao.gif)
 
-🎬 Vídeo 2D (59 s, 1080p): [`docs/media/b1_rotura_alqueva_2d.mp4`](docs/media/b1_rotura_alqueva_2d.mp4) · 🏔️ Animação 3D em ArcGIS Pro (46 s, 720p): [`docs/media/b1_rotura_alqueva_3d.mp4`](docs/media/b1_rotura_alqueva_3d.mp4) · 🌐 Página do projeto: `https://gustavosanta-star.github.io/rotura-alqueva/` · 📄 [Relatório técnico](docs/relatorio_tecnico.md) · 🖼️ [Flyer (PDF)](docs/media/flyer_b1.pdf)
+🎬 Vídeo 2D (1 min 54 s, 1080p): [`docs/media/b1_rotura_alqueva_2d.mp4`](docs/media/b1_rotura_alqueva_2d.mp4) · 🏔️ Animação 3D em ArcGIS Pro (46 s, 720p): [`docs/media/b1_rotura_alqueva_3d.mp4`](docs/media/b1_rotura_alqueva_3d.mp4) · 🌐 Página do projeto: `https://gustavosanta-star.github.io/rotura-alqueva/` · 📄 [Relatório técnico](docs/relatorio_tecnico.md) · 🖼️ [Flyer (PDF)](docs/media/flyer_b1.pdf)
 
 ## Em números
 

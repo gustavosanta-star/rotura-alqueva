@@ -25,16 +25,18 @@ import tifffile
 
 LAYOUT = {
     "video": {"largura": 1920, "altura": 1080, "fps": 30,
-              "intro_s": 3.0, "segue_s": 44.0, "fim_s": 7.0, "hold_s": 5.0, "fade_s": 0.8,
+              "intro_s": 5.0, "segue_s": 90.0, "fim_s": 12.0, "hold_s": 7.0, "fade_s": 0.8,
               "horas_segue": 12.0, "largura_vista_km": 30.0, "km_a_frente": 2.0},
     "cores": {"fundo": "#E4E1DA", "relevo_baixo": "#F1EEE6", "relevo_alto": "#D6CAB0", "limite_modelo": "#7A7A7A",
               "profundidade": ["#DEEBF7", "#C6DBEF", "#9ECAE1", "#6BAED6", "#4292C6", "#2171B5", "#084594"],
               "agua_alpha": 235, "painel": "#FFFFFF", "painel_alpha": 220, "texto": "#141414",
-              "texto_2": "#505050", "destaque": "#D7301F"},
+              "texto_2": "#505050", "destaque": "#D7301F",
+              "agua_texto": "#1D5A9E", "pais_texto": "#8A8378"},
     "profundidade": {"limites": [0.05, 0.5, 1, 2, 5, 10, 20],
                      "rotulos": ["< 0,5", "0,5 – 1", "1 – 2", "2 – 5", "5 – 10", "10 – 20", "> 20"]},
     "fonte": {"normal": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-              "negrito": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"},
+              "negrito": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+              "italico": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf"},
     "titulo": {"mostrar": True, "x": 30, "y": 26, "texto": "Rotura hipotética da barragem de Alqueva",
                "subtitulo": "Cenário B1 · profundidade da água · modelo HEC-RAS 2D", "tamanho": 40, "tamanho_sub": 24},
     "relogio": {"mostrar": True, "x": 30, "y": 146, "rotulo": "tempo desde a rotura", "tamanho": 64},
@@ -44,7 +46,8 @@ LAYOUT = {
     "escala": {"mostrar": True, "x": 310, "y": -40},
     "rodape": {"mostrar": True, "x": -40, "y": -14,
                "texto": "Cenário hipotético para estudo · terreno: SRTM, MDT DGT/CNIG · ETRS89/UTM 29N", "tamanho": 17},
-    "localidades": {"mostrar": True, "tamanho": 24,
+    "localidades": {"mostrar": True, "tamanho": 24, "zoom_p3_km": 50,
+                    # [nome, lat, lon, prioridade 1-3, tipo: local | agua | pais | mar]
                     "lista": [["Barragem de Alqueva", 38.1975, -7.4964, 1], ["Pedrógão", 38.1185, -7.6455, 1],
                               ["Pulo do Lobo", 37.8030, -7.6330, 2], ["Mértola", 37.6390, -7.6610, 1],
                               ["Pomarão", 37.5560, -7.5250, 2], ["Alcoutim", 37.4710, -7.4710, 1],
@@ -224,7 +227,7 @@ def main(pasta, eixo_p, saida, layout_p=None, camadas=None):
     alvo = np.interp(sim, REGISTOS, frente) + V["km_a_frente"]
     cx = np.array([eixo_xy(k)[0] for k in alvo]); cy = np.array([eixo_xy(k)[1] for k in alvo])
     larg = np.full(N, V["largura_vista_km"] * 1000.0)
-    xb, yb = eixo_xy(0); xa, ya = xb - 4000, yb + 9000
+    xb, yb = eixo_xy(0); xa, ya = xb - 4000, yb + 6500
     for i in range(min(N, n_i + int(3 * FPS))):
         w_ = 1.0 if i < n_i else 0.5 + 0.5 * math.cos(math.pi * (i - n_i) / (3 * FPS))
         cx[i] = xa * w_ + cx[i] * (1 - w_); cy[i] = ya * w_ + cy[i] * (1 - w_)
@@ -354,8 +357,17 @@ def main(pasta, eixo_p, saida, layout_p=None, camadas=None):
         for q, t in enumerate(c["linhas"]):
             d.text((x + 22, y + 48 + q * 32), t, font=fnt(22), fill=TXT)
 
-    locais = [(n, *utm29(la, lo), pr) for n, la, lo, pr in L["localidades"]["lista"]]
-    F_LOC1, F_LOC2 = fnt(L["localidades"]["tamanho"], True), fnt(L["localidades"]["tamanho"] - 3)
+    locais = []
+    for it in L["localidades"]["lista"]:
+        n, la, lo, pr = it[:4]; tp = it[4] if len(it) > 4 else "local"
+        locais.append((n, *utm29(la, lo), pr, tp))
+    TL = L["localidades"]["tamanho"]
+    F_LOC1, F_LOC2, F_LOC3 = fnt(TL, True), fnt(TL - 3), fnt(TL - 5)
+    FI = lambda s: ImageFont.truetype(L["fonte"].get("italico", FN), int(s))
+    F_AG = {1: FI(TL + 2), 2: FI(TL - 2), 3: FI(TL - 4)}
+    F_PAIS = fnt(TL + 4, True)
+    COR_AG, COR_PAIS = hexrgb(C.get("agua_texto", "#1D5A9E")), hexrgb(C.get("pais_texto", "#8A8378"))
+    ORD_TIPO = {"local": 0, "agua": 1, "mar": 1, "pais": 2}
 
     # zonas ocupadas pelos painéis (para não pôr rótulos por baixo)
     zonas = []
@@ -372,10 +384,28 @@ def main(pasta, eixo_p, saida, layout_p=None, camadas=None):
     def el_localidades(img, x0w, y1w, k_px, m):
         d = ImageDraw.Draw(img)
         postos = list(zonas)
-        for n, x, y, pr in sorted(locais, key=lambda t: t[3]):
+        larg_km = W / k_px / 1000.0
+        for n, x, y, pr, tp in sorted(locais, key=lambda t: (t[3], ORD_TIPO.get(t[4], 0))):
+            if pr >= 3 and larg_km > L["localidades"].get("zoom_p3_km", 50): continue
             sx = (x - x0w) * k_px; sy = (y1w - y) * k_px
+            if not (-200 < sx < W + 200 and -50 < sy < H + 50): continue
+            if tp != "local":                       # água, mar e países: texto sem ponto, centrado
+                if tp == "pais":
+                    f, cor, lab, sw = F_PAIS, COR_PAIS, "\u2009".join(n), 2
+                else:
+                    f, cor, lab, sw = F_AG[min(pr, 3)], COR_AG, n, 3
+                tw, th = f.getlength(lab), f.size
+                ok = None
+                for oy in (0, -th - 4, th + 4):
+                    b = (sx - tw / 2, sy + oy - th / 2, sx + tw / 2, sy + oy + th / 2)
+                    if b[0] > 5 and b[2] < W - 5 and b[1] > 5 and b[3] < H - 8 and not sobrepoe(b, postos):
+                        ok = (oy, b); break
+                if ok is None: continue
+                d.text((sx, sy + ok[0]), lab, font=f, fill=cor, stroke_width=sw, stroke_fill="white", anchor="mm")
+                postos.append(ok[1])
+                continue
             if not (0 < sx < W and 0 < sy < H): continue
-            f = F_LOC1 if pr == 1 else F_LOC2
+            f = F_LOC1 if pr == 1 else (F_LOC2 if pr == 2 else F_LOC3)
             lab = n
             if n in L["chegadas"] and m / 60 >= L["chegadas"][n]:
                 hc = L["chegadas"][n]
@@ -390,10 +420,11 @@ def main(pasta, eixo_p, saida, layout_p=None, camadas=None):
                 if b[0] > 5 and b[2] < W - 5 and b[1] > 5 and b[3] < H - 8 and not sobrepoe(b, postos):
                     ok = (ax, ay, anc, b); break
             if ok is None: continue
-            r = 6 if pr == 1 else 4
+            r = 6 if pr == 1 else (4 if pr == 2 else 3)
             d.ellipse((sx - r, sy - r, sx + r, sy + r), fill=(40, 40, 40), outline=(255, 255, 255), width=2)
             d.text((sx + ok[0], sy + ok[1]), lab, font=f, fill=TXT, stroke_width=3, stroke_fill="white", anchor=ok[2])
             postos.append(ok[3])
+            postos.append((sx - r, sy - r, sx + r, sy + r))
 
     # ---------------- saídas
     def ff_mp4(path, w, h):

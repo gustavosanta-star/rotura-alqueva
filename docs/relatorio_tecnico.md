@@ -98,7 +98,7 @@ O critério de aceitação definido à partida (níveis ±3 m, chegadas ±30 %, 
 
 ## 7. Produtos
 - 4 mapas A3: profundidade, perigosidade, chegada e exposição (`scripts/15_layouts_b1.py`).
-- **Vídeo 2D** (59 s, 1080p), gerado por código a partir das profundidades de 2 em 2 min (`21_video_b1.py`). A câmara segue a frente da onda, com relógio, barra de chegadas e enquadramento; há também um pacote editável por camadas.
+- **Vídeo 2D** (1 min 54 s, 1080p), gerado por código a partir dos registos de profundidade de 10 em 10 min, interpolados no tempo (`21_video_b1.py`). A câmara segue a frente da onda, com relógio, barra de chegadas, enquadramento e toponímia (34 nomes, posicionados com a BGRI e o Catastro e definidos em `layout_video.json`); há também um pacote editável por camadas.
 - **Animação 3D** em ArcGIS Pro: exagero vertical 3×, câmara oblíqua a seguir a frente; keyframes gerados por `22_anim3d_aprx.py`.
 - Flyer A4 (`23_flyer_b1.py`).
 
