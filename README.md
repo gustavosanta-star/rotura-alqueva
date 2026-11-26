@@ -1,82 +1,86 @@
-# E se a barragem de Alqueva rompesse?
+# What if the Alqueva dam failed?
 
-Uma simulação hidráulica 2D de um cenário hipotético: as barragens de Alqueva e Pedrógão rompem e a onda de cheia desce o Guadiana até ao mar. Segui-a durante 24 horas com HEC-RAS 7.0.2, ArcGIS Pro 3.6 e Python, usando só dados abertos.
+*[Versão em português](README.pt.md)*
 
-> **Atenção: este é um cenário hipotético, feito para estudo e portefólio.** Não é um plano de emergência nem substitui o Plano de Emergência Externo (PEExt) da barragem de Alqueva, que é o documento oficial. Usei o PEExt apenas como referência para validar o modelo.
+A 2D hydraulic simulation of a hypothetical scenario: the Alqueva and Pedrógão dams in southern Portugal fail, and the flood wave runs down the Guadiana river to the sea. I followed it for 24 hours with HEC-RAS 7.0.2, ArcGIS Pro 3.6 and Python, using open data only.
 
-![Pré-visualização do vídeo](docs/media/previsao.gif)
+> **Note: this is a hypothetical scenario, made for study and as a portfolio piece.** It is not an emergency plan and does not replace the External Emergency Plan (PEExt) for the Alqueva dam, which is the official document. I used the PEExt only as a reference to validate the model.
 
-- Vídeo 2D (1 min 54 s, 1080p): [`docs/media/b1_rotura_alqueva_2d.mp4`](docs/media/b1_rotura_alqueva_2d.mp4)
-- Animação 3D em ArcGIS Pro (46 s, 720p): [`docs/media/b1_rotura_alqueva_3d.mp4`](docs/media/b1_rotura_alqueva_3d.mp4)
-- Página do projeto: https://gustavosanta-star.github.io/rotura-alqueva/
-- [Relatório técnico](docs/relatorio_tecnico.md) e [flyer (PDF)](docs/media/flyer_b1.pdf)
+![Video preview](docs/media/previsao.gif)
 
-## Em números
+- 2D video (1 min 54 s, 1080p): [`docs/media/b1_rotura_alqueva_2d.mp4`](docs/media/b1_rotura_alqueva_2d.mp4)
+- 3D animation in ArcGIS Pro (46 s, 720p): [`docs/media/b1_rotura_alqueva_3d.mp4`](docs/media/b1_rotura_alqueva_3d.mp4)
+- Project page: https://gustavosanta-star.github.io/rotura-alqueva/?lang=en
+- [Technical report](docs/relatorio_tecnico.md) (in Portuguese) and [flyer (PDF)](docs/media/flyer_b1.pdf)
+
+## In numbers
 
 | | |
 |---|---|
-| Caudal máximo a jusante de Alqueva | ~210 000 m³/s |
-| Área inundada pela onda | 22 631 ha |
-| Área com perigosidade extrema (h·v > 4 m²/s) | 10 351 ha |
-| Residentes em zona inundada (Portugal + Espanha) | ~28 800 |
-| Chegada da onda | Pedrógão 0 h 42 · Mértola 4 h 18 · Alcoutim 7 h 12 · Vila Real de Santo António 11 h 30 |
+| Peak discharge downstream of Alqueva | ~210 000 m³/s |
+| Area flooded by the wave | 22 631 ha |
+| Area with extreme hazard (h·v > 4 m²/s) | 10 351 ha |
+| Residents in the flooded area (Portugal + Spain) | ~28 800 |
+| Wave arrival | Pedrógão 0 h 42 · Mértola 4 h 18 · Alcoutim 7 h 12 · Vila Real de Santo António 11 h 30 |
 
-## Mapas
+## Maps
 
-| Profundidade máxima | Perigosidade (h·v) | Tempo de chegada | Exposição |
+| Maximum depth | Hazard (h·v) | Arrival time | Exposure |
 |---|---|---|---|
 | ![](docs/media/B1_1_profundidade.jpg) | ![](docs/media/B1_2_perigosidade.jpg) | ![](docs/media/B1_3_chegada.jpg) | ![](docs/media/B1_4_exposicao.jpg) |
 
-## Como foi feito
+The map labels are in Portuguese.
 
-1. Terreno: LiDAR da DGT (2 m → 10 m) no vale; MDT do CNIG em Espanha; SRTM de 2000 para o fundo das albufeiras (anterior ao enchimento); canal esquemático no estuário.
-2. Modelo HEC-RAS 2D:
-   - albufeira e vale como duas áreas 2D, com malha de 100 m refinada a 50 m no canhão;
-   - rugosidade de Manning a partir da COS 2025;
-   - brechas em Alqueva e em Pedrógão (esta rompe em cascata, 29 min depois).
-3. Validação:
-   - hidrograma do PEExt (para o km 5) imposto logo a jusante da barragem, com a rotura desligada;
-   - níveis dentro de ±3 m até ao km 55;
-   - as limitações a jusante do Pulo do Lobo estão documentadas.
-4. Cenário B1: 56 h de simulação, com mapas de 10 em 10 min.
-5. Produtos (ArcGIS Pro + Python):
-   - mapas de profundidade, perigosidade, chegada e exposição (INE BGRI 2021, grelha JRC 2021, Catastro);
-   - vídeo 2D gerado por código;
-   - animação 3D em ArcGIS Pro;
-   - flyer.
+## How it was done
 
-Os pormenores, as tabelas de validação e as limitações estão no [relatório técnico](docs/relatorio_tecnico.md).
+1. Terrain: DGT LiDAR (2 m → 10 m) in the valley; CNIG DTM in Spain; SRTM from 2000 for the reservoir beds (before the reservoirs were filled); a schematic channel in the estuary.
+2. HEC-RAS 2D model:
+   - reservoir and valley as two 2D areas, with a 100 m mesh refined to 50 m in the canyon;
+   - Manning roughness from COS 2025 (the Portuguese land cover map);
+   - breaches at Alqueva and Pedrógão (Pedrógão fails in cascade, 29 min later).
+3. Validation:
+   - the PEExt hydrograph (for km 5) applied just downstream of the dam, with the dam failure switched off;
+   - water levels within ±3 m up to km 55;
+   - the limitations downstream of Pulo do Lobo are documented.
+4. Scenario B1: 56 h of simulation, with maps every 10 min.
+5. Products (ArcGIS Pro + Python):
+   - depth, hazard, arrival and exposure maps (INE BGRI 2021, JRC 2021 grid, Spanish Catastro);
+   - a 2D video generated in code;
+   - a 3D animation in ArcGIS Pro;
+   - a flyer.
 
-## Limitações principais
-- A jusante do Pulo do Lobo, a onda chega 1,4 a 2 vezes mais devagar do que no PEExt. Estes tempos não servem como tempos de aviso.
-- Níveis sobrestimados a jusante do Pulo do Lobo (garganta mais estreita do que a malha).
-- Foz com nível fixo (2 m) e área inundada subestimada nos sapais, que encostam ao limite do modelo.
-- Exposição com população uniforme por subsecção ou célula de 100 m (residentes, não população presente).
+The details, the validation tables and the limitations are in the [technical report](docs/relatorio_tecnico.md) (in Portuguese).
 
-## Estrutura
+## Main limitations
+- Downstream of Pulo do Lobo, the wave arrives 1.4 to 2 times later than in the PEExt. These times cannot be used as warning times.
+- Water levels are overestimated downstream of Pulo do Lobo (the gorge is narrower than the mesh).
+- The river mouth has a fixed level (2 m), and the flooded area is underestimated in the salt marshes, which run up against the model boundary.
+- Exposure assumes population is spread evenly within each census subsection or 100 m cell (residents, not the population actually present).
+
+## Structure
 
 ```
-scripts/        Python (ArcGIS Pro/arcpy e Python normal), numerados pela ordem de execução
-  00–05         área de estudo, descarga de dados abertos, terreno, curva cota-volume
-  06–12         barragens, resultados do HEC-RAS, COS → Manning, comparação com o PEExt
-  13–15         produtos do B1, exposição (PT e ES), layouts A3
-  16–22         dados da cena 3D, imagens de 2 min, vídeo 2D, animação 3D
-  23            flyer A4
-  kit/          geração da batimetria, das linhas de referência e dos ficheiros HEC-RAS
-  util/         leitura/escrita de GeoTIFF e projeção UTM sem GDAL
-docs/           relatório técnico, página web (GitHub Pages) e media
+scripts/        Python (ArcGIS Pro/arcpy and plain Python), numbered in run order
+  00–05         study area, open data download, terrain, elevation-volume curve
+  06–12         dams, HEC-RAS results, COS → Manning, comparison with the PEExt
+  13–15         B1 products, exposure (PT and ES), A3 layouts
+  16–22         3D scene data, 2-minute frames, 2D video, 3D animation
+  23            A4 flyer
+  kit/          bathymetry, reference lines and HEC-RAS input files
+  util/         GeoTIFF read/write and UTM projection without GDAL
+docs/           technical report, web page (GitHub Pages) and media
 ```
 
-Os dados (vários GB) e o modelo HEC-RAS não estão no repositório; descarregam-se das fontes indicadas no relatório. Nos scripts, troca `C:\caminho\para\rotura-alqueva` pela pasta do teu projeto.
+Script names and comments are in Portuguese. The data (several GB) and the HEC-RAS model are not in the repository; they can be downloaded from the sources listed in the report. In the scripts, replace `C:\caminho\para\rotura-alqueva` with your project folder.
 
-## Fontes de dados
-DGT (MDT LiDAR, COS 2025) · CNIG (MDT 5 m) · NASA/USGS (SRTM) · INE (BGRI e Censos 2021) · JRC/Eurostat (Census Population Grid 2021) · Dirección General del Catastro (INSPIRE) · ANEPC (PEExt de Alqueva, usado como referência). Cada fonte tem a sua licença e os seus termos de atribuição.
+## Data sources
+DGT (LiDAR DTM, COS 2025) · CNIG (5 m DTM) · NASA/USGS (SRTM) · INE (BGRI and 2021 Census) · JRC/Eurostat (Census Population Grid 2021) · Dirección General del Catastro (INSPIRE) · ANEPC (Alqueva PEExt, used as a reference). Each source has its own licence and attribution terms.
 
-## Licença
-- Código: [MIT](LICENSE).
-- Texto, mapas, vídeo e imagens: CC BY 4.0, com atribuição a Gustavo Santa.
+## Licence
+- Code: [MIT](LICENSE).
+- Text, maps, video and images: CC BY 4.0, with attribution to Gustavo Santa.
 
 ---
-Gustavo Santa · Engenharia geoespacial · [gustavosanta-star.github.io](https://gustavosanta-star.github.io) · ORCID [0009-0008-4266-0732](https://orcid.org/0009-0008-4266-0732)
+Gustavo Santa · Geospatial engineering · [gustavosanta-star.github.io](https://gustavosanta-star.github.io) · ORCID [0009-0008-4266-0732](https://orcid.org/0009-0008-4266-0732)
 
-<sub>Projeto pessoal, feito fora do âmbito profissional, só com dados abertos.</sub>
+<sub>Personal project, made outside my professional work, using open data only.</sub>
